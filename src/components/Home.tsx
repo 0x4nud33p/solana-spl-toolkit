@@ -1,13 +1,12 @@
-"use client";
-
-import React, { ChangeEvent, FormEvent } from "react";
-import { Input } from "../../components/ui/input";
-import { Button } from "../../components/ui/button";
-import { Label } from "../../components/ui/label";
-import { Card, CardHeader, CardTitle, CardContent } from "../../components/ui/card";
+import { ChangeEvent, FormEvent } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useUrlContext } from "@/context/UrlContext";
+import '../index.css'
 
-function Landing() {
+function Home() {
   const { url, setUrl } = useUrlContext();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -23,7 +22,7 @@ function Landing() {
   };
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center text-white">
+    <div className="min-h-screen font-Space-grotesk bg-black flex items-center justify-center text-white">
       <Card className="w-full max-w-md bg-black rounded-lg shadow-lg p-6">
         <CardHeader>
           <CardTitle className="text-2xl text-white font-semibold text-center border-gray-500">
@@ -55,4 +54,4 @@ function Landing() {
   );
 }
 
-export default Landing;
+export default Home;
