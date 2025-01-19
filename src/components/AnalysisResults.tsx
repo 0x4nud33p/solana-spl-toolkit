@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { UrlContext } from "@/context/UrlContext";
 import axios from "axios";
+import vaderSentiment from "vader-sentiment";
 import { toast } from "sonner";
 
 
@@ -13,7 +14,9 @@ const AnalysisResults = () => {
   const { url, videoId } = useContext(UrlContext)!;
   const [commentLoading,setCommentLoading] = useState(false);
   const [commentTextLoading,setCommentTextLoading] = useState(false);
+  const [sentimentAnalysis, setSentimentAnalysis] = useState<any>({ agree: 0, disagree: 0, neutral: 0 });
   const [comments,setComments] = useState<string[]>([]);
+  
   // comments counts handler
   const fetchCommentCount = async () => {
     try {
@@ -61,8 +64,7 @@ const AnalysisResults = () => {
         ).filter(Boolean);
 
         setComments(fetchedComments || []);
-        console.log("length of the comments array",fetchedComments.length);
-        console.log("Fetched Comments:", fetchedComments);
+        analyzeSentiment(fetchedComments);
     } catch (error) {
         console.error("Error while fetching comment text:", error);
         toast.error("Error while fetching comment text");
@@ -70,6 +72,25 @@ const AnalysisResults = () => {
         setCommentTextLoading(false);
     }
 }, [videoId]);
+
+const analyzeSentiment = (comments: string[]) => {
+    let agree = 0;
+    let disagree = 0;
+    let neutral = 0;
+
+    comments.forEach((comment) => {
+        const sentiment = vaderSentiment.SentimentIntensityAnalyzer.polarity_scores(comment);
+        if (sentiment.compound > 0.1) {
+            agree++;
+        } else if (sentiment.compound < -0.1) {
+            disagree++;
+        } else {
+            neutral++;
+        }
+    });
+
+    setSentimentAnalysis({ agree, disagree, neutral });
+};
 
 useEffect(() => {
     if (videoId) {
@@ -127,15 +148,15 @@ useEffect(() => {
                   )} </p>
                 <div className="flex justify-between mt-4">
                   <div>
-                    <p className="text-xl font-bold">505</p>
+                    <p className="text-xl font-bold">{sentimentAnalysis.agree}</p>
                     <p className="text-sm text-gray-400">Agree</p>
                   </div>
                   <div>
-                    <p className="text-xl font-bold">137</p>
+                    <p className="text-xl font-bold">{sentimentAnalysis.disagree}</p>
                     <p className="text-sm text-gray-400">Disagree</p>
                   </div>
                   <div>
-                    <p className="text-xl font-bold">161</p>
+                    <p className="text-xl font-bold">{sentimentAnalysis.disagree}</p>
                     <p className="text-sm text-gray-400">Neutral</p>
                   </div>
                 </div>
