@@ -2,8 +2,82 @@ import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
+import { useCallback, useContext, useEffect, useState } from "react";
+import { UrlContext } from "@/context/UrlContext";
+import axios from "axios";
+import { toast } from "sonner";
+
 
 const AnalysisResults = () => {
+  const [commentCount, setCommentCount] = useState<number>(0);
+  const { url, videoId } = useContext(UrlContext)!;
+  const [commentLoading,setCommentLoading] = useState(false);
+  const [commentTextLoading,setCommentTextLoading] = useState(false);
+  const [comments,setComments] = useState<string[]>([]);
+  // comments counts handler
+  const fetchCommentCount = async () => {
+    try {
+      setCommentLoading(true);
+      const config = {
+        part : "statistics",
+        id : `${videoId}`,
+        key : `${import.meta.env.VITE_YOUTUBE_API_KEY}`
+      }
+      const { data } = await axios.get(`https://www.googleapis.com/youtube/v3/videos`,{
+        params : config
+      })
+      if(!data){
+        toast.error("error while retreving data",res);
+      }
+      setCommentCount(data?.items[0]?.statistics.commentCount);
+    } catch (error : any) {
+      console.error(error);
+      toast.error("error while fetching comment stats",error)
+    }finally {
+      setCommentLoading(false);
+    }
+  } 
+  // commment text handler
+  const fetchCommentTextData = useCallback(async () => {
+    try {
+        setCommentTextLoading(true);
+        
+        const config = {
+            part: "snippet",
+            videoId: videoId,
+            maxResults: 100,
+            order: "time"
+        };
+        
+        const { data } = await axios.get(`https://www.googleapis.com/youtube/v3/commentThreads`, {
+            params: {
+                ...config,
+                key: import.meta.env.VITE_YOUTUBE_API_KEY,
+            },
+        });
+
+        const fetchedComments = data?.items?.map((comment: any) => 
+            comment?.snippet?.topLevelComment?.snippet?.textDisplay
+        ).filter(Boolean);
+
+        setComments(fetchedComments || []);
+        console.log("length of the comments array",fetchedComments.length);
+        console.log("Fetched Comments:", fetchedComments);
+    } catch (error) {
+        console.error("Error while fetching comment text:", error);
+        toast.error("Error while fetching comment text");
+    } finally {
+        setCommentTextLoading(false);
+    }
+}, [videoId]);
+
+useEffect(() => {
+    if (videoId) {
+        fetchCommentCount();
+        fetchCommentTextData();
+    }
+}, [videoId]);
+
   return (
     <div className="min-h-screen font-Space-grotesk bg-black text-white p-8">
       <Card className="max-w-5xl mx-auto">
@@ -45,7 +119,12 @@ const AnalysisResults = () => {
             <div>
               <h3 className="text-md font-bold mb-4">Total Comments</h3>
               <div className="space-y-2 text-center">
-                <p className="text-5xl font-bold">803</p>
+                <p className="text-5xl font-bold">
+                  {commentLoading ? (
+                    <span className="loader"></span>
+                  ) : (
+                    commentCount
+                  )} </p>
                 <div className="flex justify-between mt-4">
                   <div>
                     <p className="text-xl font-bold">505</p>
