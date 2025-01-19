@@ -5,6 +5,8 @@ import React, { createContext, ReactNode, useState, useContext } from "react";
 interface UrlContextType {
   url: string;
   setUrl: (newUrl: string) => void;
+  videoId : string;
+  setVideoId : (videoid : string) => void;
 }
 
 const UrlContext = createContext<UrlContextType | undefined>(undefined);
@@ -15,9 +17,10 @@ interface UrlProviderProps {
 
 const UrlProvider: React.FC<UrlProviderProps> = ({ children }) => {
   const [url, setUrl] = useState<string>("");
+  const [videoId, setVideoId] = useState<string>("");
 
   return (
-    <UrlContext.Provider value={{ url, setUrl }}>
+    <UrlContext.Provider value={{ url, setUrl, videoId, setVideoId }}>
       {children}
     </UrlContext.Provider>
   );

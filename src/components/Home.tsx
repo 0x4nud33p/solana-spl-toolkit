@@ -1,24 +1,47 @@
-import { ChangeEvent, FormEvent } from "react";
+import { ChangeEvent, FormEvent, useContext } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { useUrlContext } from "@/context/UrlContext";
-import '../index.css'
+import { toast, Toaster } from "sonner";
+import { UrlContext } from "@/context/UrlContext";
+import { useNavigate } from "react-router-dom";
 
 function Home() {
-  const { url, setUrl } = useUrlContext();
+  const { url, setUrl, setVideoId} = useContext(UrlContext)!;
+  const navigate = useNavigate();
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setUrl(e.target.value);
+  const isValidYouTubeUrl = (url: string) => {
+    const regex = /^(https?:\/\/)?([\w-]+(\.[\w-]+)+)(:[0-9]{1,5})?(\/[\w-.~:?#@!$&'()*+,;=%]*)?$/i;
+    return regex.test(url);
   };
 
   const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    if (url.trim() === "") {
-      alert("Please enter a valid YouTube URL.");
-      return;
-    }
+  e.preventDefault();
+
+  if (!isValidYouTubeUrl(url)) {
+    toast.error("Please enter a valid YouTube URL.");
+    return;
+  }
+
+  const ytVideoIdRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{11})/;
+  const match = url.match(ytVideoIdRegex);
+
+  const ytVideoId = match ? match[1] : null;
+
+  if (!ytVideoId) {
+    toast.error("Could not extract video ID from URL.");
+    return;
+  }
+
+  setVideoId(ytVideoId);
+  console.log(ytVideoId);
+  navigate("/stats")
+};
+
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setUrl(e.target.value);
   };
 
   return (
@@ -50,6 +73,7 @@ function Home() {
           </form>
         </CardContent>
       </Card>
+      <Toaster />
     </div>
   );
 }

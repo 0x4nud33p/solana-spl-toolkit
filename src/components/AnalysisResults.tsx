@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 
 const AnalysisResults = () => {
   return (
-    <div className="min-h-screen bg-black text-white p-8">
+    <div className="min-h-screen font-Space-grotesk bg-black text-white p-8">
       <Card className="max-w-5xl mx-auto">
         {/* Sentiment Analysis Section */}
         <CardHeader className="pb-4">
