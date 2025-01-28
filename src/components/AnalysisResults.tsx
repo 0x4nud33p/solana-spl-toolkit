@@ -14,6 +14,7 @@ const AnalysisResults = () => {
   const [commentCount, setCommentCount] = useState<number>(0);
   const { url, videoId } = useContext(UrlContext)!;
   const [commentLoading, setCommentLoading] = useState(false);
+  //@ts-ignore
   const [commentTextLoading, setCommentTextLoading] = useState(false);
   const [sentimentAnalysis, setSentimentAnalysis] = useState<any>({ agree: 0, disagree: 0, neutral: 0 });
   const [comments, setComments] = useState<string[]>([]);
