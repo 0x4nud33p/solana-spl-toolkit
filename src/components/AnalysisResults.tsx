@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { UrlContext } from "@/context/UrlContext";
 import axios from "axios";
+//@ts-ignore
 import vaderSentiment from "vader-sentiment";
 import { toast } from "sonner";
 import { Link, useNavigate } from "react-router-dom";
@@ -16,6 +17,7 @@ const AnalysisResults = () => {
   const [commentTextLoading, setCommentTextLoading] = useState(false);
   const [sentimentAnalysis, setSentimentAnalysis] = useState<any>({ agree: 0, disagree: 0, neutral: 0 });
   const [comments, setComments] = useState<string[]>([]);
+  const [monthlyComments, setMonthlyComments] = useState<number[]>(Array(12).fill(0));
   const navigate = useNavigate();
 
   // Fetch Comment Count
@@ -62,11 +64,15 @@ const AnalysisResults = () => {
       });
 
       const fetchedComments = data?.items
-        ?.map((comment: any) => comment?.snippet?.topLevelComment?.snippet?.textDisplay)
-        .filter(Boolean);
+        ?.map((comment: any) => ({
+          text: comment?.snippet?.topLevelComment?.snippet?.textDisplay,
+          date: comment?.snippet?.topLevelComment?.snippet?.publishedAt,
+        }))
+        .filter((comment: any) => comment.text && comment.date);
 
       setComments(fetchedComments || []);
       analyzeSentiment(fetchedComments);
+      calculateMonthlyDistribution(fetchedComments);
     } catch (error) {
       console.error("Error while fetching comment text:", error);
       toast.error("Error while fetching comment text");
@@ -76,13 +82,13 @@ const AnalysisResults = () => {
   }, [videoId]);
 
   // Sentiment Analysis
-  const analyzeSentiment = (comments: string[]) => {
+  const analyzeSentiment = (comments: { text: string }[]) => {
     let agree = 0;
     let disagree = 0;
     let neutral = 0;
 
     comments.forEach((comment) => {
-      const sentiment = vaderSentiment.SentimentIntensityAnalyzer.polarity_scores(comment);
+      const sentiment = vaderSentiment.SentimentIntensityAnalyzer.polarity_scores(comment.text);
       if (sentiment.compound > 0.1) {
         agree++;
       } else if (sentiment.compound < -0.1) {
@@ -93,6 +99,16 @@ const AnalysisResults = () => {
     });
 
     setSentimentAnalysis({ agree, disagree, neutral });
+  };
+
+  // Calculate Monthly Distribution
+  const calculateMonthlyDistribution = (comments: { date: string }[]) => {
+    const monthlyCounts = Array(12).fill(0);
+    comments.forEach((comment) => {
+      const month = new Date(comment.date).getMonth();
+      monthlyCounts[month]++;
+    });
+    setMonthlyComments(monthlyCounts);
   };
 
   useEffect(() => {
@@ -170,36 +186,20 @@ const AnalysisResults = () => {
 
         {/* Comment Distribution Section */}
         <CardContent className="mt-8">
-          <h3 className="text-md font-bold mb-4">Comment Distribution</h3>
+          <h3 className="text-md font-bold mb-4">Monthly Comment Distribution</h3>
           <div className="flex justify-center">
-            <div className="w-full">
-              {/* Bar Chart */}
-              <div className="grid grid-cols-6 gap-4">
-                <div className="text-center">
-                  <div className="h-32 bg-purple-500" style={{ height: "50px" }}></div>
-                  <p className="mt-2 text-sm">Jan</p>
+            <div className="w-full grid grid-cols-12 gap-2">
+              {monthlyComments.map((count, index) => (
+                <div key={index} className="text-center">
+                  <div
+                    className="bg-purple-500 mx-auto"
+                    style={{ height: `${count}px`, width: "20px" }}
+                  ></div>
+                  <p className="mt-2 text-xs">
+                    {new Date(0, index).toLocaleString("default", { month: "short" })}
+                  </p>
                 </div>
-                <div className="text-center">
-                  <div className="h-32 bg-purple-500" style={{ height: "10px" }}></div>
-                  <p className="mt-2 text-sm">Feb</p>
-                </div>
-                <div className="text-center">
-                  <div className="h-32 bg-purple-500" style={{ height: "100px" }}></div>
-                  <p className="mt-2 text-sm">Mar</p>
-                </div>
-                <div className="text-center">
-                  <div className="h-32 bg-purple-500" style={{ height: "20px" }}></div>
-                  <p className="mt-2 text-sm">Apr</p>
-                </div>
-                <div className="text-center">
-                  <div className="h-32 bg-purple-500" style={{ height: "90px" }}></div>
-                  <p className="mt-2 text-sm">May</p>
-                </div>
-                <div className="text-center">
-                  <div className="h-32 bg-purple-500" style={{ height: "80px" }}></div>
-                  <p className="mt-2 text-sm">Jun</p>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </CardContent>
@@ -211,7 +211,10 @@ const AnalysisResults = () => {
               Back to Input
             </Button>
           </Link>
-          <p className="text-red-500 text-xs md:text-sm">Spam comments are not considered</p>
+          <div>
+            <p className="text-red-500 text-xs md:text-sm">Analysis is based upon the latest 100 comments</p>
+            <p className="text-red-500 text-xs md:text-sm">Spam comments are not considered</p>
+          </div>
         </CardContent>
       </Card>
     </div>
