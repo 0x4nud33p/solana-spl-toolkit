@@ -1,50 +1,21 @@
-# React + TypeScript + Vite
+# YouTube Comment Sentiment Analysis
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project provides sentiment analysis of YouTube comments for a specific video. It retrieves and processes comments using the YouTube API, performs sentiment analysis using the `vader-sentiment` library, and visualizes the results in a user-friendly interface. Additionally, it provides a distribution chart of comments by month.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Sentiment Analysis**: Analyzes comments for sentiment, classifying them into three categories: Agree, Disagree, and Neutral.
+- **Total Comments Count**: Displays the total number of comments for a given video.
+- **Comment Distribution**: Displays the number of comments per month in a bar chart.
+- **User-friendly Interface**: Built with React, displaying sentiment results and comment statistics in a clean layout.
 
-## Expanding the ESLint configuration
+## Installation
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+To get started, clone the repository and install dependencies.
 
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
-
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+```bash
+git clone https://github.com/anudeep009/comment-tracker
+cd comment-tracker
+npm install
+npm run dev
 ```
