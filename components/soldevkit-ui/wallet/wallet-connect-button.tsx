@@ -63,10 +63,10 @@ export const WalletModal: React.FC<{
   // Memoize wallet lists
   const { listedWallets, collapsedWallets } = useMemo(() => {
     const installed = wallets.filter(
-      (w) => w.readyState === WalletReadyState.Installed,
+      (w) => w.readyState === WalletReadyState.Installed
     );
     const notInstalled = wallets.filter(
-      (w) => w.readyState !== WalletReadyState.Installed,
+      (w) => w.readyState !== WalletReadyState.Installed
     );
     return {
       listedWallets: installed.length ? installed : notInstalled,
@@ -86,7 +86,7 @@ export const WalletModal: React.FC<{
         // You could add toast notification here
       }
     },
-    [select],
+    [select]
   );
 
   // Close modal when wallet connects successfully
@@ -245,7 +245,9 @@ export function WalletConnectButton({
             />
           )}
           <span>
-            {`${publicKey.toBase58().slice(0, 6)}...${publicKey.toBase58().slice(-4)}`}
+            {`${publicKey.toBase58().slice(0, 6)}...${publicKey
+              .toBase58()
+              .slice(-4)}`}
           </span>
         </div>
       );
