@@ -1,21 +1,36 @@
-# YouTube Comment Sentiment Analysis
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-This project provides sentiment analysis of YouTube comments for a specific video. It retrieves and processes comments using the YouTube API, performs sentiment analysis using the `vader-sentiment` library, and visualizes the results in a user-friendly interface. Additionally, it provides a distribution chart of comments by month.
+## Getting Started
 
-## Features
-
-- **Sentiment Analysis**: Analyzes comments for sentiment, classifying them into three categories: Agree, Disagree, and Neutral.
-- **Total Comments Count**: Displays the total number of comments for a given video.
-- **Comment Distribution**: Displays the number of comments per month in a bar chart.
-- **User-friendly Interface**: Built with React, displaying sentiment results and comment statistics in a clean layout.
-
-## Installation
-
-To get started, clone the repository and install dependencies.
+First, run the development server:
 
 ```bash
-git clone https://github.com/anudeep009/comment-tracker
-cd comment-tracker
-npm install
 npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+
+## Learn More
+
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
